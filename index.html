@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeDrive Niagara</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --secondary: #ea580c;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    
+    body {
+      background-color: #f0f5ff;
+      color: var(--dark);
+      line-height: 1.6;
+      background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,100 M100,0 L0,100" stroke="%23dbeafe" stroke-width="1"/></svg>');
+      background-size: 150px 150px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), #0f2c6d);
+      color: white;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--secondary), #ff8c00, #ffd166);
+    }
+    
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 2.8rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    
+    h1 i {
+      color: var(--secondary);
+    }
+    
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+    
+    nav button {
+      background-color: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      padding: 0.9rem 1.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.05rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    nav button:hover, nav button.active {
+      background-color: white;
+      color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    nav button i {
+      font-size: 1.2rem;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    .tab {
+      display: none;
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.5s ease;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .tab.active {
+      display: block;
+    }
+    
+    h2 {
+      color: var(--primary);
+      margin-bottom: 1.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.8rem;
+    }
+    
+    h2 i {
+      color: var(--secondary);
+      font-size: 1.5rem;
+    }
+    
+    form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+      form {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .form-group.full {
+        grid-column: 1 / -1;
+      }
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    label {
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    label i {
+      color: var(--primary-light);
+    }
+    
+    input, textarea, select {
+      padding: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      transition: all 0.3s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    
+    button[type="submit"] {
+      background: linear-gradient(135deg, var(--primary), #152c6e);
+      color: white;
+      border: none;
+      padding: 1.1rem 1.8rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      grid-column: 1 / -1;
+      max-width: 300px;
+      margin: 1rem auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25);
+    }
+    
+    button[type="submit"]:hover {
+      background: linear-gradient(135deg, #152c6e, var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(30, 58, 138, 0.35);
+    }
+    
+    #traffic-feed, #winter-list, #project-list {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin-top: 2rem;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .alert-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      border-left: 4px solid var(--primary-light);
+      transition: transform 0.3s;
+    }
+    
+    .alert-card:hover {
+      transform: translateY(-3px);
+    }
+    
+    .alert-card.high {
+      border-left-color: var(--danger);
+    }
+    
+    .alert-card.medium {
+      border-left-color: var(--warning);
+    }
+    
+    .alert-card.low {
+      border-left-color: var(--success);
+    }
+    
+    .alert-card h3 {
+      color: var(--dark);
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    
+    .alert-card .date {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+    
+    .alert-card .description {
+      margin-top: 0.8rem;
+      line-height: 1.7;
+    }
+    
+    .alert-card .location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    .placeholder-content {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--gray);
+    }
+    
+    .placeholder-content i {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      color: #cbd5e1;
+    }
+    
+    .placeholder-content h3 {
+      margin-bottom: 0.8rem;
+      color: var(--dark);
+    }
+    
+    .project-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+    
+    .project-card h3 {
+      color: var(--primary);
+      margin-bottom: 0.8rem;
+    }
+    
+    .project-card .status {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .status.planned {
+      background: #dbeafe;
+      color: var(--primary);
+    }
+    
+    .status.in-progress {
+      background: #ffedd5;
+      color: #ea580c;
+    }
+    
+    .status.completed {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    
+    .vote-container {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    
+    .vote-btn {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+    
+    .vote-btn.yes {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    
+    .vote-btn.yes:hover {
+      border-color: #15803d;
+    }
+    
+    .vote-btn.no {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    
+    .vote-btn.no:hover {
+      border-color: #b91c1c;
+    }
+    
+    .vote-btn.active {
+      border: 2px solid;
+      transform: scale(1.05);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--dark);
+      background: #f1f5f9;
+      margin-top: 3rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+    }
+    
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--secondary);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success);
+      color: white;
+      padding: 1.2rem 2.2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      z-index: 1000;
+      animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    
+    .map-container {
+      height: 300px;
+      background: #e2e8f0;
+      border-radius: 12px;
+      margin-top: 1.5rem;
+      overflow: hidden;
+      position: relative;
+      background-image: linear-gradient(45deg, #cbd5e1 25%, transparent 25%), 
+                        linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+                        linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255,255,255,0.9);
+      color: var(--dark);
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .map-overlay h3 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-car"></i> SafeDrive Niagara</h1>
+    <nav>
+      <button class="active" onclick="showTab('hazard')"><i class="fas fa-triangle-exclamation"></i> Report Hazard</button>
+      <button onclick="showTab('traffic')"><i class="fas fa-traffic-light"></i> Traffic Alerts</button>
+      <button onclick="showTab('winter')"><i class="fas fa-snowflake"></i> Winter Roads</button>
+      <button onclick="showTab('projects')"><i class="fas fa-road"></i> Projects & Voting</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hazard Reporting Tab -->
+    <section id="hazard" class="tab active">
+      <h2><i class="fas fa-triangle-exclamation"></i> Report a Road Hazard</h2>
+      <form id="hazard-form">
+        <div class="form-group">
+          <label for="location"><i class="fas fa-location-dot"></i> Location (GPS or Address):</label>
+          <input type="text" id="location" name="location" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="photo"><i class="fas fa-camera"></i> Photo URL:</label>
+          <input type="text" id="photo" name="photo" placeholder="Optional image link">
+        </div>
+        
+        <div class="form-group">
+          <label for="hazard-type"><i class="fas fa-warning"></i> Hazard Type:</label>
+          <select id="hazard-type" name="hazard-type">
+            <option value="">Select type</option>
+            <option value="Pothole">Pothole</option>
+            <option value="Debris">Road Debris</option>
+            <option value="Flooding">Flooding</option>
+            <option value="Accident">Accident</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="urgency"><i class="fas fa-gauge-high"></i> Urgency:</label>
+          <select id="urgency" name="urgency" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        
+        <div class="form-group full">
+          <label for="description"><i class="fas fa-file-lines"></i> Description:</label>
+          <textarea id="description" name="description" rows="4" required placeholder="Describe the hazard in detail..."></textarea>
+        </div>
+        
+        <button type="submit"><i class="fas fa-paper-plane"></i> Submit Report</button>
+      </form>
+      
+      <div class="map-container">
+        <div class="map-overlay">
+          <h3>Hazard Map</h3>
+          <p>Reported hazards will appear here on the map</p>
+          <p><i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-top: 1rem; color: var(--gray);"></i></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Traffic Alerts Tab -->
+    <section id="traffic" class="tab">
+      <h2><i class="fas fa-traffic-light"></i> Traffic & Construction Alerts</h2>
+      <div id="traffic-feed">
+        <div class="alert-card high">
+          <h3><i class="fas fa-circle-exclamation"></i> Major Accident on Highway 401</h3>
+          <span class="date"><i class="fas fa-clock"></i> Posted: Oct 18, 2023 | 08:45 AM</span>
+          <div class="description">
+            <p>Major collision on Highway 401 Westbound between Keele St and Weston Rd. Right two lanes closed. Expect significant delays.</p>
+            <div class="location"><i class="fas fa-location-dot"></i> Highway 401, Toronto</div>
+          </div>
+        </div>
+        
+        <div class="alert-card medium">
+          <h3><i class="fas fa-cone"></i> Construction on QEW Burlington</h3>
+          <span class="date"><i class="fas fa-clock"></i> Posted: Oct 17, 2023 | 04:30 PM</span>
+          <div class="description">
+            <p>Ongoing construction on QEW Eastbound from Burloak Dr to Guelph Line. Reduced to two lanes until November 15th.</p>
+            <div class="location"><i class="fas fa-location-dot"></i> Queen Elizabeth Way, Burlington</div>
+          </div>
+        </div>
+        
+        <div class="alert-card low">
+          <h3><i class="fas fa-bridge"></i> Bridge Maintenance on Gardiner Expressway</h3>
+          <span class="date"><i class="fas fa-clock"></i> Posted: Oct 18, 2023 | 07:15 AM</span>
+          <div class="description">
+            <p>Overnight bridge maintenance on Gardiner Expressway Eastbound. Lane closures from 10 PM to 5 AM until October 22nd.</p>
+            <div class="location"><i class="fas fa-location-dot"></i> Gardiner Expressway, Toronto</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Winter Roads Tab -->
+    <section id="winter" class="tab">
+      <h2><i class="fas fa-snowflake"></i> Winter Road Updates</h2>
+      <div id="winter-list">
+        <div class="alert-card">
+          <h3><i class="fas fa-snowplow"></i> Northern Niagara Winter Storm</h3>
+          <span class="date"><i class="fas fa-clock"></i> Updated: Oct 18, 2023 | 09:30 AM</span>
+          <div class="description">
+            <p>Winter storm warning for Thunder Bay, Sault Ste. Marie, and Sudbury regions. Snow accumulation of 15-25 cm expected. Roads may be hazardous.</p>
+            <div class="location"><i class="fas fa-location-dot"></i> Northern Niagara</div>
+          </div>
+        </div>
+        
+        <div class="alert-card">
+          <h3><i class="fas fa-icicles"></i> Freezing Rain in Ottawa Region</h3>
+          <span class="date"><i class="fas fa-clock"></i> Updated: Oct 18, 2023 | 08:15 AM</span>
+          <div class="description">
+            <p>Freezing rain advisory for Ottawa and surrounding areas. Roads may become icy, especially on bridges and overpasses.</p>
+            <div class="location"><i class="fas fa-location-dot"></i> Ottawa Region</div>
+          </div>
+        </div>
+        
+        <div class="placeholder-content">
+          <i class="fas fa-snowflake"></i>
+          <h3>No Active Winter Advisories</h3>
+          <p>Check back here for winter road condition updates during the winter season</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects & Voting Tab -->
+    <section id="projects" class="tab">
+      <h2><i class="fas fa-road"></i> Infrastructure Projects</h2>
+      <div id="project-list">
+        <div class="project-card">
+          <div class="status in-progress">In Progress</div>
+          <h3>Highway 401 Expansion - Milton to Mississauga</h3>
+          <p>Adding new lanes to Highway 401 between James Snow Parkway and Highway 407 to reduce congestion.</p>
+          <p><strong>Estimated Completion:</strong> December 2024</p>
+          <div class="vote-container">
+            <div class="vote-btn yes">Support (78%)</div>
+            <div class="vote-btn no">Oppose (22%)</div>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="status planned">Planned</div>
+          <h3>Gardiner Expressway Rehabilitation</h3>
+          <p>Major rehabilitation project for the elevated portion of the Gardiner Expressway in downtown Toronto.</p>
+          <p><strong>Estimated Start:</strong> Spring 2024</p>
+          <div class="vote-container">
+            <div class="vote-btn yes">Support (65%)</div>
+            <div class="vote-btn no">Oppose (35%)</div>
+          </div>
+        </div>
+      </div>
+      
+      <h3 style="margin-top: 2rem;"><i class="fas fa-check-to-slot"></i> Vote on Upcoming Projects</h3>
+      <form id="vote-form">
+        <div class="form-group">
+          <label for="project"><i class="fas fa-road-circle-check"></i> Project Name:</label>
+          <input type="text" id="project" name="project" required placeholder="Enter project name">
+        </div>
+        
+        <div class="form-group">
+          <label for="vote"><i class="fas fa-thumbs-up"></i> Your Vote:</label>
+          <select id="vote" name="vote" required>
+            <option value="">Select your vote</option>
+            <option value="Yes">Yes - Support this project</option>
+            <option value="No">No - Oppose this project</option>
+          </select>
+        </div>
+        
+        <div class="form-group full">
+          <label for="suggestion"><i class="fas fa-comment"></i> Suggestions:</label>
+          <textarea id="suggestion" name="suggestion" rows="4" placeholder="Share your suggestions for this project..."></textarea>
+        </div>
+        
+        <button type="submit"><i class="fas fa-vote-yea"></i> Submit Vote</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>SafeDrive Niagara - Keeping Niagara Roads Safe for Everyone</p>
+      <p>© 2023 Ministry of Transportation Niagara. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="#"><i class="fas fa-file-contract"></i> Terms of Use</a>
+        <a href="#"><i class="fas fa-phone"></i> Contact Us</a>
+        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab navigation
+    function showTab(id) {
+      // Hide all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab
+      document.getElementById(id).classList.add('active');
+      
+      // Update active button
+      document.querySelectorAll('nav button').forEach(button => {
+        button.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+    
+    // Form submission handlers
+    document.addEventListener('DOMContentLoaded', function() {
+      // Hazard form submission
+      const hazardForm = document.getElementById('hazard-form');
+      if (hazardForm) {
+        hazardForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          showNotification('Hazard report submitted successfully!');
+          hazardForm.reset();
+        });
+      }
+      
+      // Vote form submission
+      const voteForm = document.getElementById('vote-form');
+      if (voteForm) {
+        voteForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          showNotification('Thank you for your vote!');
+          voteForm.reset();
+        });
+      }
+    });
+    
+    // Show notification
+    function showNotification(message) {
+      // Remove existing notifications
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+      
+      // Create new notification
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `<i class="fas fa-circle-check"></i> ${message}`;
+      document.body.appendChild(notification);
+      
+      // Auto-remove after animation
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+    
+    // Simulate traffic feed loading
+    function fetchTrafficAlerts() {
+      // In a real implementation, this would fetch from an API
+      setTimeout(() => {
+        // This would update the content
+      }, 1000);
+    }
+    
+    window.onload = fetchTrafficAlerts;
+  </script>
+</body>
+</html>
